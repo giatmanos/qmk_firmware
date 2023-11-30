@@ -25,10 +25,6 @@ enum sofle_layers {
     _DSYMB
 };
 
-enum custom_keycodes {          // Make sure have the awesome keycode ready
-  ALT_TAB = SAFE_RANGE,
-};
-
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /*
  * QWERTY
@@ -39,7 +35,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * | Tab  |   A  |   S  |   D  |   F  |   G  |-------.    ,-------|   H  |   J  |   K  |   L  |   ;  |  '   |
  * |------+------+------+------+------+------|  Mute |    | Pause |------+------+------+------+------+------|
- * |ALT_TB|   Z  |   X  |   C  |   V  |   B  |-------|    |-------|   N  |   M  |   ,  |   .  |   /  | DEL  |
+ * | Home |   Z  |   X  |   C  |   V  |   B  |-------|    |-------|   N  |   M  |   ,  |   .  |   /  | End  |
  * `-----------------------------------------/       /     \      \-----------------------------------------'
  *            | LGUI |      | LOW  | SFT  | /Enter  /       \Space \  | RCTRL| RAISE| ALT  |      |
  *            |      |      |      |      |/       /         \      \ |      |      |      |      |
@@ -50,8 +46,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_GRV,   KC_1,   KC_2,    KC_3,    KC_4,    KC_5,                       KC_6,     KC_7,     KC_8,    KC_9,    KC_0,    KC_MINS,
     KC_ESC,   KC_Q,   KC_W,    KC_E,    KC_R,    KC_T,                       KC_Y,     KC_U,     KC_I,    KC_O,    KC_P,    KC_BSPC,
     KC_TAB,   KC_A,   KC_S,    KC_D,    KC_F,    KC_G,                       KC_H,     KC_J,     KC_K,    KC_L,    KC_SCLN, KC_QUOT,
-    ALT_TAB,  KC_Z,   KC_X,    KC_C,    KC_V,    KC_B,    KC_MUTE,   KC_MPLY,KC_N,     KC_M,     KC_COMM, KC_DOT,  KC_SLSH, KC_DEL,
-                      KC_LGUI,  _______,  MO(_SYMB), KC_LSFT, KC_ENT, KC_SPC, KC_RCTL,  MO(_RAISE),KC_RALT, _______
+    KC_HOME,  KC_Z,   KC_X,    KC_C,    KC_V,    KC_B,    KC_MUTE,   KC_MPLY,KC_N,     KC_M,     KC_COMM, KC_DOT,  KC_SLSH, KC_END,
+                      KC_LGUI,  _______,MO(_SYMB), KC_LSFT, KC_ENT, KC_SPC, KC_RCTL,  MO(_RAISE),KC_RALT, _______
 ),
 /* SYMB
  * ,-----------------------------------------.                    ,-----------------------------------------.
@@ -61,7 +57,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * |   -  |   +  |   /  |   *  |   _  |   =  |-------.    ,-------| Left | Down |  Up  | Right|   ;  |   |  |
  * |------+------+------+------+------+------|  MUTE |    |       |------+------+------+------+------+------|
- * |   !  |  &   |  {   |  [   |   (  |   ^  |-------|    |-------|   $  |   )  |   ]  |   }  |   \  |      |
+ * |   ^  |   &  |  {   |  [   |   (  |   !  |-------|    |-------|      |   )  |   ]  |   }  |   \  |   $  |
  * `-----------------------------------------/       /     \      \-----------------------------------------'
  *            | LGUI | LAlt | LCTR |SYMB | /Enter  /       \Space \  |RAISE | RCTR | RAlt | RGUI |
  *            |      |      |      |      |/       /         \      \ |      |      |      |      |
@@ -118,23 +114,49 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 )
 };
 
+// Initialize variable holding the binary
+// representation of active modifiers.
+uint8_t mod_state;
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  switch (keycode) { // This will do most of the grunt work with the keycodes.
-    case ALT_TAB:
-      if (record->event.pressed) {
-        if (!is_alt_tab_active) {
-          is_alt_tab_active = true;
-          register_code(KC_LALT);
+    // Store the current modifier state in the variable for later reference
+    mod_state = get_mods();
+    switch (keycode) {
+
+    case KC_BSPC:
+        {
+        // Initialize a boolean variable that keeps track
+        // of the delete key status: registered or not?
+        static bool delkey_registered;
+        if (record->event.pressed) {
+            // Detect the activation of either shift keys
+            if (mod_state & MOD_MASK_SHIFT) {
+                // First temporarily canceling both shifts so that
+                // shift isn't applied to the KC_DEL keycode
+                del_mods(MOD_MASK_SHIFT);
+                register_code(KC_DEL);
+                // Update the boolean variable to reflect the status of KC_DEL
+                delkey_registered = true;
+                // Reapplying modifier state so that the held shift key(s)
+                // still work even after having tapped the Backspace/Delete key.
+                set_mods(mod_state);
+                return false;
+            }
+        } else { // on release of KC_BSPC
+            // In case KC_DEL is still being sent even after the release of KC_BSPC
+            if (delkey_registered) {
+                unregister_code(KC_DEL);
+                delkey_registered = false;
+                return false;
+            }
         }
-        alt_tab_timer = timer_read();
-        register_code(KC_TAB);
-      } else {
-        unregister_code(KC_TAB);
-      }
-      break;
-  }
-  return true;
-}
+        // Let QMK process the KC_BSPC keycode as usual outside of shift
+        return true;
+    }
+
+    }
+    return true;
+};
+
 
 void matrix_scan_user(void) { // The very important timer.
   if (is_alt_tab_active) {
@@ -156,16 +178,6 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 
 #ifdef OLED_ENABLE
 
-static void render_logo(void) {
-    static const char PROGMEM qmk_logo[] = {
-        0x80,0x81,0x82,0x83,0x84,0x85,0x86,0x87,0x88,0x89,0x8a,0x8b,0x8c,0x8d,0x8e,0x8f,0x90,0x91,0x92,0x93,0x94,
-        0xa0,0xa1,0xa2,0xa3,0xa4,0xa5,0xa6,0xa7,0xa8,0xa9,0xaa,0xab,0xac,0xad,0xae,0xaf,0xb0,0xb1,0xb2,0xb3,0xb4,
-        0xc0,0xc1,0xc2,0xc3,0xc4,0xc5,0xc6,0xc7,0xc8,0xc9,0xca,0xcb,0xcc,0xcd,0xce,0xcf,0xd0,0xd1,0xd2,0xd3,0xd4,0
-    };
-
-    oled_write_P(qmk_logo, false);
-}
-
 static void print_status_narrow(void) {
     // Print current mode
     oled_write_P(PSTR("\n\n"), false);
@@ -182,8 +194,8 @@ static void print_status_narrow(void) {
             oled_write_P(PSTR("Symbols"), false);
             break;
         case _DSYMB:
-            oled_write_P(PSTR("Symbols"), false);
-            oled_write_P(PSTR("Square"), false);
+            oled_write_ln_P(PSTR("Symbols"), false);
+            oled_write_ln_P(PSTR("Square"), false);
             break;
         default:
             oled_write_ln_P(PSTR("Undef"), false);
@@ -201,8 +213,6 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 bool oled_task_user(void) {
     if (is_keyboard_master()) {
         print_status_narrow();
-    } else {
-        render_logo();
     }
     return false;
 }
