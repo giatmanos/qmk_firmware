@@ -17,12 +17,19 @@
 
 bool is_alt_tab_active = false; // ADD this near the beginning of keymap.c
 uint16_t alt_tab_timer = 0;     // we will be using them soon.
+bool is_sft_alt_tab_active = false; // ADD this near the beginning of keymap.c
+uint16_t sft_alt_tab_timer = 0;     // we will be using them soon.
 
 enum sofle_layers {
     _QWERTY,
     _SYMB,
     _RAISE,
-    _DSYMB
+    _NPAD
+};
+
+enum custom_keycodes {          // Make sure have the awesome keycode ready
+  ALT_TAB = SAFE_RANGE,
+  SFT_ALT_TAB
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -31,7 +38,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * ,-----------------------------------------.                    ,-----------------------------------------.
  * |  `   |   1  |   2  |   3  |   4  |   5  |                    |   6  |   7  |   8  |   9  |   0  |  -   |
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
- * | ESC  |   Q  |   W  |   E  |   R  |   T  |                    |   Y  |   U  |   I  |   O  |   P  | Bspc |
+ * | ESC  |   Q  |   W  |   E  |   R  |   T  |                    |   Y  |   U  |   I  |   O  |   P  |Bsp/Dl|
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * | Tab  |   A  |   S  |   D  |   F  |   G  |-------.    ,-------|   H  |   J  |   K  |   L  |   ;  |  '   |
  * |------+------+------+------+------+------|  Mute |    | Pause |------+------+------+------+------+------|
@@ -66,11 +73,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_SYMB] = LAYOUT(
   _______,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                       KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_F11,
   KC_GRV,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                       KC_6,    KC_7,    KC_8,    KC_9,    KC_0,  KC_F12,
-  KC_LPRN, KC_RPRN, KC_LBRC, KC_RBRC, KC_LCBR, KC_RCBR,                       KC_LEFT, KC_DOWN, KC_UP, KC_RGHT, KC_SCLN, KC_PIPE,
-  _______,  KC_EQL, KC_LCBR, KC_LBRC, KC_LPRN, KC_RCBR, _______,       _______, KC_LBRC, KC_RPRN, KC_RBRC, KC_RCBR, KC_BSLS, _______,
-                       _______, _______, _______, _______, _______,       _______, _______, MO(_DSYMB), KC_RALT, _______
+  KC_MINS, KC_PLUS, KC_SLSH, KC_ASTR, KC_UNDS, KC_EQL,                       KC_LEFT, KC_DOWN, KC_UP, KC_RGHT, KC_SCLN, KC_PIPE,
+  KC_CIRC,  KC_AMPR, KC_LCBR, KC_LBRC, KC_LPRN, KC_EXLM, _______,       _______, KC_AT, KC_RPRN, KC_RBRC, KC_RCBR, KC_BSLS, KC_DLR,
+                     _______, _______, _______, _______, _______,       _______, _______, TG(_NPAD), KC_RALT, _______
 ),
-/* DSYMB
+/* NPAD
  * ,-----------------------------------------.                    ,-----------------------------------------.
  * |      |  F1  |  F2  |  F3  |  F4  |  F5  |                    |  F6  |  F7  |  F8  |  F9  | F10  | F11  |
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
@@ -84,12 +91,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *            |      |      |      |      |/       /         \      \ |      |      |      |      |
  *            `----------------------------------'           '------''---------------------------'
  */
-[_DSYMB] = LAYOUT(
-  _______,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                       KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_F11,
-  KC_GRV,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                       KC_6,    KC_7,    KC_8,    KC_9,    KC_0,  KC_F12,
-  KC_LPRN, KC_RPRN, KC_LBRC, KC_RBRC, KC_LCBR, KC_RCBR,                       KC_LEFT, KC_DOWN, KC_UP, KC_RGHT, KC_SCLN, KC_PIPE,
-  _______,  KC_EQL, KC_LCBR, KC_LBRC, KC_LPRN, KC_RCBR, _______,       _______, KC_LBRC, KC_RPRN, KC_RBRC, KC_RCBR, KC_BSLS, _______,
-                       _______, _______, _______, _______, _______,       _______, _______, _______, KC_RALT, _______
+[_NPAD] = LAYOUT(
+  _______,  _______, _______, _______, _______, _______,                     _______, _______, _______, _______, _______, _______,
+  _______,  _______, _______, _______, _______, _______,                     _______, KC_KP_7, KC_KP_8, KC_KP_9, _______, _______,
+  _______,  _______, _______, _______, _______, _______,                     _______, KC_KP_4, KC_KP_5, KC_KP_6, KC_ENT , _______,
+  _______,  _______, _______, _______, _______, _______, _______,    _______,_______, KC_KP_1, KC_KP_2, KC_KP_3, _______, _______,
+                     _______, _______, _______, _______, _______,    TG(_NPAD),KC_KP_0  , KC_PDOT, _______, _______
 ),
 /* RAISE
  * ,----------------------------------------.                    ,-----------------------------------------.
@@ -110,7 +117,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   _______,  KC_INS,  KC_PSCR,   KC_APP,  XXXXXXX, XXXXXXX,                        KC_PGUP,  _______,   KC_UP,  _______, _______, KC_BSPC,
   _______, KC_LALT,  KC_LCTL,  KC_LSFT,  XXXXXXX, KC_CAPS,                       KC_PGDN,  KC_LEFT, KC_DOWN, KC_RGHT,  KC_DEL, KC_BSPC,
   _______,KC_UNDO, KC_CUT, KC_COPY, KC_PASTE, XXXXXXX,  _______,       _______,  XXXXXXX,  _______, XXXXXXX,  _______,   XXXXXXX, _______,
-                         _______, _______, _______, _______, _______,       _______, _______, _______, _______, _______
+                    _______, _______, _______, _______, _______,       _______, _______, _______, _______, _______
 )
 };
 
@@ -152,7 +159,33 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         // Let QMK process the KC_BSPC keycode as usual outside of shift
         return true;
     }
-
+    break;
+    case ALT_TAB:
+        if (record->event.pressed) {
+            if (!is_alt_tab_active) {
+                is_alt_tab_active = true;
+                register_code(KC_LALT);
+            }
+            alt_tab_timer = timer_read();
+            register_code(KC_TAB);
+        } else {
+            unregister_code(KC_TAB);
+        }
+        break;
+    case SFT_ALT_TAB:
+        if (record->event.pressed) {
+            if (!is_sft_alt_tab_active) {
+                is_sft_alt_tab_active = true;
+                register_code(KC_LALT);
+            }
+            sft_alt_tab_timer = timer_read();
+            register_code(KC_TAB);
+            register_code(KC_LSFT);
+        } else {
+            unregister_code(KC_TAB);
+            unregister_code(KC_LSFT);
+        }
+        break;
     }
     return true;
 };
@@ -169,10 +202,10 @@ void matrix_scan_user(void) { // The very important timer.
 
 #if defined(ENCODER_MAP_ENABLE)
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
-    [_QWERTY] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU), ENCODER_CCW_CW(KC_MPRV, KC_MNXT) },
-    [_SYMB]  = { ENCODER_CCW_CW(KC_PGUP, KC_PGDN), ENCODER_CCW_CW(KC_MPRV, KC_MNXT) },
-    [_DSYMB]  = { ENCODER_CCW_CW(KC_PGUP, KC_PGDN), ENCODER_CCW_CW(KC_MPRV, KC_MNXT) },
-    [_RAISE]  = { ENCODER_CCW_CW(KC_PGUP, KC_PGDN), ENCODER_CCW_CW(KC_MPRV, KC_MNXT) }
+    [_QWERTY] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU), ENCODER_CCW_CW(SFT_ALT_TAB, ALT_TAB) },
+    [_SYMB]  = { ENCODER_CCW_CW(_______, _______), ENCODER_CCW_CW(C(KC_Y), C(KC_E)) },
+    [_NPAD]  = { ENCODER_CCW_CW(_______, _______), ENCODER_CCW_CW(_______, _______) },
+    [_RAISE]  = { ENCODER_CCW_CW(_______, _______), ENCODER_CCW_CW(_______, _______) }
 };
 #endif
 
@@ -185,17 +218,17 @@ static void print_status_narrow(void) {
     oled_write_ln_P(PSTR("LAYER"), false);
     switch (get_highest_layer(layer_state)) {
         case _QWERTY:
-            oled_write_P(PSTR("Base\n"), false);
+            oled_write_P(PSTR("Base"), false);
             break;
         case _RAISE:
             oled_write_P(PSTR("Raise"), false);
             break;
         case _SYMB:
-            oled_write_P(PSTR("Symbols"), false);
+            oled_write_P(PSTR("Symbol"), false);
             break;
-        case _DSYMB:
-            oled_write_ln_P(PSTR("Symbols"), false);
-            oled_write_ln_P(PSTR("Square"), false);
+        case _NPAD:
+            oled_write_ln_P(PSTR("Number\n"), false);
+            oled_write_ln_P(PSTR("Pad"), false);
             break;
         default:
             oled_write_ln_P(PSTR("Undef"), false);
