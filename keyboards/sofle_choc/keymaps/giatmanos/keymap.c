@@ -432,7 +432,7 @@ bool oled_task_user(void) {
         }
         else
         {
-            oled_write_ln_P(PSTR("Scroll"), false);
+            oled_write_ln_P(PSTR("Scrl"), false);
             oled_write_ln_P(PSTR("Lock"), false);
             oled_write_ln_P(PSTR("Off"), false);
         }
