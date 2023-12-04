@@ -30,6 +30,22 @@ enum custom_keycodes {          // Make sure have the awesome keycode ready
   SFT_ALT_TAB
 };
 
+// Tap Dance declarations
+enum {
+    TD_ESC_HOME,
+    TD_ESC_END,
+    TD_SFT_CTRL,
+    TD_CTRL_SFT
+};
+
+// Tap Dance definitions
+tap_dance_action_t tap_dance_actions[] = {
+    [TD_ESC_HOME] = ACTION_TAP_DANCE_DOUBLE(KC_ESC, KC_HOME),
+    [TD_ESC_END] = ACTION_TAP_DANCE_DOUBLE(KC_ESC, KC_END),
+    [TD_SFT_CTRL] = ACTION_TAP_DANCE_DOUBLE(KC_LSFT, KC_RCTL),
+    [TD_CTRL_SFT] = ACTION_TAP_DANCE_DOUBLE(KC_LCTL, KC_LSFT)
+};
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /*
  * QWERTY
@@ -48,11 +64,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 
 [_QWERTY] = LAYOUT(
-    KC_GRV,           KC_1,   KC_2,    KC_3,    KC_4,    KC_5,                                   KC_6,     KC_7,     KC_8,    KC_9,    KC_0,        KC_DEL,
-    KC_ESC,           KC_Q,   KC_W,    KC_E,    KC_R,    KC_T,                                   KC_Y,     KC_U,     KC_I,    KC_O,    KC_P,        KC_BSPC,
+    KC_GRV,           KC_1,   KC_2,    KC_3,    KC_4,    KC_5,                                   KC_6,     KC_7,     KC_8,    KC_9,    KC_0,        TG(_NPAD),
+    KC_DEL,           KC_Q,   KC_W,    KC_E,    KC_R,    KC_T,                                   KC_Y,     KC_U,     KC_I,    KC_O,    KC_P,        KC_BSPC,
     KC_TAB,           KC_A,   KC_S,    KC_D,    KC_F,    KC_G,                                   KC_H,     KC_J,     KC_K,    KC_L,    KC_SCLN,     KC_QUOT,
-    LCTL_T(KC_HOME),  KC_Z,   KC_X,    KC_C,    KC_V,    KC_B,             KC_MUTE,   KC_MPLY,   KC_N,     KC_M,     KC_COMM, KC_DOT,  KC_SLSH, RSFT_T(KC_END),
-                               KC_LGUI, KC_LALT,MO(_SYMB),LSFT_T(KC_ESC),   KC_ENT,   KC_SPC, RCTL_T(KC_ESC),  MO(_RAISE),KC_LALT, TG(_NPAD)
+    TD(TD_ESC_HOME),  KC_Z,   KC_X,    KC_C,    KC_V,    KC_B,      KC_MUTE,   KC_MPLY,   KC_N,     KC_M,     KC_COMM, KC_DOT,  KC_SLSH, TD(TD_ESC_END),
+                               KC_LGUI, KC_LALT,MO(_SYMB),TD(TD_SFT_CTRL),   KC_ENT,   KC_SPC, TD(TD_CTRL_SFT),  LM(_SYMB, MOD_LSFT),KC_LALT, MO(_RAISE)
 ),
 /* SYMB
  * ,-----------------------------------------.                    ,-----------------------------------------.
@@ -73,7 +89,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_GRV,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                               KC_6,    KC_7,    KC_8,    KC_9,    KC_0,  KC_F12,
   _______, _______, _______, KC_EQL, KC_MINS, _______,                               KC_LEFT, KC_DOWN, KC_UP, KC_RGHT, _______, _______,
   KC_CIRC,  _______, _______, _______, _______, _______,     _______,       _______, _______, KC_LPRN, KC_LBRC, KC_LCBR, KC_BSLS, KC_DLR,
-    LM(_SYMB, MOD_LGUI|MOD_LCTL), LM(_SYMB, MOD_LGUI|MOD_LALT), _______, _______, _______,       _______, _______, LM(_SYMB, MOD_LSFT), _______, _______
+    LM(_SYMB, MOD_LGUI|MOD_LCTL), LM(_SYMB, MOD_LGUI|MOD_LALT), _______, _______, _______,       _______, _______, _______, _______, _______
 ),
 /* RAISE
  * ,----------------------------------------.                    ,-----------------------------------------.
@@ -92,8 +108,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_RAISE] = LAYOUT(
   _______, _______ , _______ , _______ , _______ , _______,                      _______,  _______, _______,  _______, _______, _______,
   _______,  KC_INS,  KC_PSCR,   KC_APP,  XXXXXXX, XXXXXXX,                       _______,  _______, _______,  _______, KC_PGUP, _______,
-  _______, LCTL(KC_Y),  _______,  _______,  XXXXXXX, KC_CAPS,                       KC_LEFT, KC_DOWN,  KC_UP  ,  KC_RGHT, KC_PGDN, _______,
-  _______,LCTL(KC_Z), LCTL(KC_X), LCTL(KC_C), LCTL(KC_V), XXXXXXX,  _______,       _______,  XXXXXXX,  _______, XXXXXXX,  _______, XXXXXXX, _______,
+  _______, LCTL(KC_Y),  _______,  _______,  _______, KC_CAPS,                       KC_LEFT, KC_DOWN,  KC_UP  ,  KC_RGHT, KC_PGDN, _______,
+  _______,LCTL(KC_Z), LCTL(KC_X), LCTL(KC_C), LCTL(KC_V), XXXXXXX,  _______,       _______,  _______,  _______, _______,  _______, _______, _______,
                     _______, _______, _______, _______, _______,       _______, _______, _______, _______, _______
 ),
 [_NPAD] = LAYOUT(
