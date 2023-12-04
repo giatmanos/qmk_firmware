@@ -129,37 +129,130 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     mod_state = get_mods();
     switch (keycode) {
 
-    case KC_BSPC:
+    case KC_MS_U:
+        {
+            // Initialize a boolean variable that keeps track
+            // of the delete key status: registered or not?
+            static bool mouse_up_registered;
+            if (record->event.pressed)
+            {
+                // Detect the activation of either shift keys
+                if (mod_state & MOD_MASK_SHIFT) {
+                    // First temporarily canceling both shifts so that
+                    // shift isn't applied to the KC_DEL keycode
+                    del_mods(MOD_MASK_SHIFT);
+                    register_code(KC_MS_L);
+                    // Update the boolean variable to reflect the status of KC_DEL
+                    mouse_up_registered = true;
+                    // Reapplying modifier state so that the held shift key(s)
+                    // still work even after having tapped the Backspace/Delete key.
+                    set_mods(mod_state);
+                    return false;
+                }
+            }
+            else
+            { // on release of KC_WH_D
+                if (mouse_up_registered) {
+                    unregister_code(KC_MS_L);
+                    mouse_up_registered = false;
+                    return false;
+                }
+            }
+            return true;
+        }
+    case KC_MS_D:
+        {
+            // Initialize a boolean variable that keeps track
+            // of the delete key status: registered or not?
+            static bool mouse_down_registered;
+            if (record->event.pressed)
+            {
+                // Detect the activation of either shift keys
+                if (mod_state & MOD_MASK_SHIFT) {
+                    // First temporarily canceling both shifts so that
+                    // shift isn't applied to the KC_DEL keycode
+                    del_mods(MOD_MASK_SHIFT);
+                    register_code(KC_MS_R);
+                    // Update the boolean variable to reflect the status of KC_DEL
+                    mouse_down_registered = true;
+                    // Reapplying modifier state so that the held shift key(s)
+                    // still work even after having tapped the Backspace/Delete key.
+                    set_mods(mod_state);
+                    return false;
+                }
+            }
+            else
+            { // on release of KC_WH_D
+                if (mouse_down_registered) {
+                    unregister_code(KC_MS_R);
+                    mouse_down_registered = false;
+                    return false;
+                }
+            }
+            return true;
+        }
+    case KC_WH_U:
         {
         // Initialize a boolean variable that keeps track
         // of the delete key status: registered or not?
-        static bool delkey_registered;
-        if (record->event.pressed) {
+            static bool scroll_left_registered;
+            if (record->event.pressed)
+            {
             // Detect the activation of either shift keys
             if (mod_state & MOD_MASK_SHIFT) {
                 // First temporarily canceling both shifts so that
                 // shift isn't applied to the KC_DEL keycode
                 del_mods(MOD_MASK_SHIFT);
-                register_code(KC_DEL);
+                    register_code(KC_WH_L);
                 // Update the boolean variable to reflect the status of KC_DEL
-                delkey_registered = true;
+                    scroll_left_registered = true;
                 // Reapplying modifier state so that the held shift key(s)
                 // still work even after having tapped the Backspace/Delete key.
                 set_mods(mod_state);
                 return false;
             }
-        } else { // on release of KC_BSPC
-            // In case KC_DEL is still being sent even after the release of KC_BSPC
-            if (delkey_registered) {
-                unregister_code(KC_DEL);
-                delkey_registered = false;
+            }
+            else
+            { // on release of KC_WH_D
+                if (scroll_left_registered) {
+                    unregister_code(KC_WH_L);
+                    scroll_left_registered = false;
                 return false;
             }
+            }
+            return true;
         }
-        // Let QMK process the KC_BSPC keycode as usual outside of shift
+    case KC_WH_D:
+        {
+            // Initialize a boolean variable that keeps track
+            // of the delete key status: registered or not?
+            static bool scroll_right_registered;
+            if (record->event.pressed)
+            {
+                // Detect the activation of either shift keys
+                if (mod_state & MOD_MASK_SHIFT) {
+                    // First temporarily canceling both shifts so that
+                    // shift isn't applied to the KC_DEL keycode
+                    del_mods(MOD_MASK_SHIFT);
+                    register_code(KC_WH_R);
+                    // Update the boolean variable to reflect the status of KC_DEL
+                    scroll_right_registered = true;
+                    // Reapplying modifier state so that the held shift key(s)
+                    // still work even after having tapped the Backspace/Delete key.
+                    set_mods(mod_state);
+                    return false;
+                }
+            }
+            else
+            { // on release of KC_WH_D
+                if (scroll_right_registered) {
+                    unregister_code(KC_WH_R);
+                    scroll_right_registered = false;
+                    return false;
+                }
+            }
         return true;
     }
-    break;
     case ALT_TAB:
         if (record->event.pressed) {
             if (!is_alt_tab_active) {
@@ -174,16 +267,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         break;
     case SFT_ALT_TAB:
         if (record->event.pressed) {
-            if (!is_sft_alt_tab_active) {
-                is_sft_alt_tab_active = true;
+            if (!is_alt_tab_active) {
+                is_alt_tab_active = true;
                 register_code(KC_LALT);
             }
-            sft_alt_tab_timer = timer_read();
-            register_code(KC_TAB);
+            alt_tab_timer = timer_read();
             register_code(KC_LSFT);
+            register_code(KC_TAB);
         } else {
-            unregister_code(KC_TAB);
             unregister_code(KC_LSFT);
+            unregister_code(KC_TAB);
         }
         break;
     }
@@ -202,10 +295,10 @@ void matrix_scan_user(void) { // The very important timer.
 
 #if defined(ENCODER_MAP_ENABLE)
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
-    [_QWERTY] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU), ENCODER_CCW_CW(SFT_ALT_TAB, ALT_TAB) },
+    [_QWERTY] = { ENCODER_CCW_CW(SFT_ALT_TAB, ALT_TAB), ENCODER_CCW_CW(KC_WH_U, KC_WH_D) },
     [_SYMB]  = { ENCODER_CCW_CW(_______, _______), ENCODER_CCW_CW(C(KC_Y), C(KC_E)) },
-    [_NPAD]  = { ENCODER_CCW_CW(_______, _______), ENCODER_CCW_CW(_______, _______) },
-    [_RAISE]  = { ENCODER_CCW_CW(_______, _______), ENCODER_CCW_CW(_______, _______) }
+    [_NPAD]  = { ENCODER_CCW_CW(KC_MS_U, KC_MS_D), ENCODER_CCW_CW(KC_WH_U, KC_WH_D) },
+    [_RAISE]  = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU), ENCODER_CCW_CW(_______, _______) }
 };
 #endif
 
