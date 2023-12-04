@@ -29,3 +29,5 @@
 #define RGB_MATRIX_MAXIMUM_BRIGHTNESS 100  // limits maximum brightness of LEDs (max 255). Higher may cause the controller to crash.
 #define ENCODER_DIRECTION_FLIP
 #define ENCODER_RESOLUTION 4
+
+#define SPLIT_LED_STATE_ENABLE
