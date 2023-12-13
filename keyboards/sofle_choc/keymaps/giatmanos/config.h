@@ -32,3 +32,4 @@
 
 #define TAPPING_TERM 200
 #define SPLIT_LED_STATE_ENABLE
+#define EE_HANDS
