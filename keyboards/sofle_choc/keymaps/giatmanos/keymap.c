@@ -35,7 +35,10 @@ enum {
     TD_ESC_HOME,
     TD_ESC_END,
     TD_SFT_CTRL,
-    TD_CTRL_SFT
+    TD_CTRL_SFT,
+    TD_PRN,
+    TD_CBR,
+    TD_BRC
 };
 
 // Tap Dance definitions
@@ -43,7 +46,10 @@ tap_dance_action_t tap_dance_actions[] = {
     [TD_ESC_HOME] = ACTION_TAP_DANCE_DOUBLE(KC_ESC, KC_HOME),
     [TD_ESC_END] = ACTION_TAP_DANCE_DOUBLE(KC_ESC, KC_END),
     [TD_SFT_CTRL] = ACTION_TAP_DANCE_DOUBLE(KC_LSFT, KC_RCTL),
-    [TD_CTRL_SFT] = ACTION_TAP_DANCE_DOUBLE(KC_LCTL, KC_LSFT)
+    [TD_CTRL_SFT] = ACTION_TAP_DANCE_DOUBLE(KC_LCTL, KC_LSFT),
+    [TD_PRN] = ACTION_TAP_DANCE_DOUBLE(KC_LPRN, KC_RPRN),
+    [TD_CBR] = ACTION_TAP_DANCE_DOUBLE(KC_LCBR, KC_RCBR),
+    [TD_BRC] = ACTION_TAP_DANCE_DOUBLE(KC_LBRC, KC_RBRC),
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -78,7 +84,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * |      |      |      |  +=  |  -_  |      |-------.    ,-------| Left | Down |  Up  | Right|      |      |
  * |------+------+------+------+------+------|       |    |       |------+------+------+------+------+------|
- * |   ^  |      |      |      |      |      |-------|    |-------|      |  ()  |  []  |  {}  |  \|  |   $  |
+ * |   ^  |      |      |      |      |      |-------|    |-------|      |  ()  |  {}  |  []  |  \|  |   $  |
  * `-----------------------------------------/       /     \      \-----------------------------------------'
  *            | LGUI | LAlt | LCTR |SYMB | /Enter  /       \Space \  |RAISE | RCTR | RAlt | RGUI |
  *            |      |      |      |      |/       /         \      \ |      |      |      |      |
@@ -88,7 +94,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   _______,   KC_F1,   KC_F2,   KC_F3,   KC_F4,  KC_F5,                               KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_F11,
   KC_GRV,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                               KC_6,    KC_7,    KC_8,    KC_9,    KC_0,  KC_F12,
   _______, _______, _______, KC_EQL, KC_MINS, _______,                               KC_LEFT, KC_DOWN, KC_UP, KC_RGHT, _______, _______,
-  KC_CIRC,  _______, _______, _______, _______, _______,     _______,       _______, _______, KC_LPRN, KC_LBRC, KC_LCBR, KC_BSLS, KC_DLR,
+  KC_CIRC,  _______, _______, _______, _______, _______,     _______,       _______, _______, TD(TD_PRN), TD(TD_CBR), TD(TD_BRC), KC_BSLS, KC_DLR,
     LM(_SYMB, MOD_LGUI|MOD_LCTL), LM(_SYMB, MOD_LGUI|MOD_LALT), _______, _______, _______,       _______, _______, _______, _______, _______
 ),
 /* RAISE
@@ -128,74 +134,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     // Store the current modifier state in the variable for later reference
     mod_state = get_mods();
     switch (keycode) {
-
-    case KC_LPRN:
-        {
-            static bool rprn_registered;
-            if (record->event.pressed) {
-                if (mod_state & MOD_MASK_SHIFT) {
-                    del_mods(MOD_MASK_SHIFT);
-                    register_code(KC_RSFT);
-                    register_code(KC_0);
-                    rprn_registered = true;
-                    set_mods(mod_state);
-                    return false;
-                }
-            } else {
-                if (rprn_registered) {
-                    unregister_code(KC_RSFT);
-                    unregister_code(KC_0);
-                    rprn_registered = false;
-                    return false;
-                }
-            }
-            return true;
-        }
-    break;
-    case KC_LBRC:
-        {
-            static bool rbrc_registered;
-            if (record->event.pressed) {
-                if (mod_state & MOD_MASK_SHIFT) {
-                    del_mods(MOD_MASK_SHIFT);
-                    register_code(KC_RBRC);
-                    rbrc_registered = true;
-                    set_mods(mod_state);
-                    return false;
-                }
-            } else {
-                if (rbrc_registered) {
-                    unregister_code(KC_RBRC);
-                    rbrc_registered = false;
-                    return false;
-                }
-            }
-            return true;
-        }
-    break;
-    case KC_LCBR:
-        {
-            static bool rcbr_registered;
-            if (record->event.pressed) {
-                if (mod_state & MOD_MASK_SHIFT) {
-                    del_mods(MOD_MASK_SHIFT);
-                    register_code(KC_RSFT);
-                    register_code(KC_RBRC);
-                    rcbr_registered = true;
-                    set_mods(mod_state);
-                    return false;
-                }
-            } else {
-                if (rcbr_registered) {
-                    unregister_code(KC_RSFT);
-                    unregister_code(KC_RBRC);
-                    rcbr_registered = false;
-                    return false;
-                }
-            }
-            return true;
-        }
-    break;
     case KC_MS_U:
         {
             // Initialize a boolean variable that keeps track
