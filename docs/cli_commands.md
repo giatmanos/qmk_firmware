@@ -322,6 +322,18 @@ Creates a keymap.json from a keymap.c.
 qmk c2json -km KEYMAP -kb KEYBOARD [-q] [--no-cpp] [-o OUTPUT] filename
 ```
 
+**Examples**:
+
+```
+qmk c2json -km default -kb handwired/dactyl_promicro
+```
+
+or with filename:
+
+```
+qmk c2json keyboards/handwired/dactyl_promicro/keymaps/default/keymap.c
+```
+
 ## `qmk lint`
 
 Checks over a keyboard and/or keymap and highlights common errors, problems, and anti-patterns.
@@ -360,6 +372,16 @@ This command is directory aware. It will automatically fill in KEYBOARD if you a
 
 ```
 qmk list-keymaps -kb planck/ez
+```
+
+## `qmk migrate`
+
+This command searches for legacy code that can be converted to the new `info.json` format and adds it to the specified keyboard's `info.json`.
+
+**Usage**:
+
+```
+qmk migrate [-h] -kb KEYBOARD [-f FILTER]
 ```
 
 ## `qmk new-keyboard`
