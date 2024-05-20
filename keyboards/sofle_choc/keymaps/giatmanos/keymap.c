@@ -112,7 +112,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_GRV,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                               KC_6,    KC_7,    KC_8,    KC_9,    KC_0,  KC_F12,
   XXXXXXX, XXXXXXX, XXXXXXX, KC_EQL, KC_MINS, XXXXXXX,                               KC_LEFT, KC_DOWN, KC_UP, KC_RGHT, XXXXXXX, XXXXXXX,
   KC_CIRC,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX,       XXXXXXX, XXXXXXX, TD(TD_PRN), TD(TD_CBR), TD(TD_BRC), KC_BSLS, KC_DLR,
-    LM(_SYMB, MOD_LGUI|MOD_LCTL), LM(_SYMB, MOD_LGUI|MOD_LALT), XXXXXXX, XXXXXXX, XXXXXXX,       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
+    LM(_SYMB, MOD_LGUI|MOD_LCTL), LM(_SYMB, MOD_LGUI|MOD_LALT), _______, _______, _______,       _______, _______, _______, _______, _______
 ),
 /* RAISE
  * ,----------------------------------------.                    ,-----------------------------------------.
@@ -133,14 +133,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   XXXXXXX,  KC_INS,  KC_PSCR,   KC_APP,  XXXXXXX, XXXXXXX,                          XXXXXXX,  XXXXXXX, XXXXXXX,  XXXXXXX, KC_PGUP, KC_F12,
   XXXXXXX, LCTL(KC_Y),  XXXXXXX,  XXXXXXX,  XXXXXXX, KC_CAPS,                       KC_LEFT, KC_DOWN,  KC_UP  ,  KC_RGHT, KC_PGDN, XXXXXXX,
   XXXXXXX,LCTL(KC_Z), LCTL(KC_X), LCTL(KC_C), LCTL(KC_V), XXXXXXX,  XXXXXXX,       XXXXXXX,  XXXXXXX,  XXXXXXX, XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX,
-                    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,_______ 
+                    _______, _______, _______, _______, _______,       _______, _______, _______, _______,_______ 
 ),
 [_NPAD] = LAYOUT(
   XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                     XXXXXXX, KC_NUM, XXXXXXX, XXXXXXX, XXXXXXX, _______,
   XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                     XXXXXXX, KC_KP_7, KC_KP_8, KC_KP_9, KC_PMNS, KC_BSPC,
   XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                     XXXXXXX, KC_KP_4, KC_KP_5, KC_KP_6, KC_PPLS, KC_ENT,
   XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,    XXXXXXX,XXXXXXX, KC_KP_1, KC_KP_2, KC_KP_3, KC_PSLS, KC_PAST,
-                     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_BTN2,    KC_BTN1,KC_KP_0  , KC_PDOT, XXXXXXX, XXXXXXX
+                     _______, _______, _______, _______, KC_BTN2,    KC_BTN1,KC_KP_0  , KC_PDOT, _______, _______
 ),
 };
 
