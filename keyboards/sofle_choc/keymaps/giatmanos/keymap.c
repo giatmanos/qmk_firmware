@@ -38,8 +38,25 @@ enum {
     TD_CTRL_SFT,
     TD_PRN,
     TD_CBR,
-    TD_BRC
+    TD_BRC,
+    TD_QUOT_LAYER
 };
+
+typedef enum {
+    TD_NONE,
+    TD_UNKNOWN,
+    TD_SINGLE_TAP,
+    TD_SIGNLE_HOLD,
+    TD_DOUBLE_TAP,
+    TD_DOUBLE_HOLD
+} td_state_t;
+
+typedef struct
+{
+    bool is_press_action;
+    td_state_t state;
+} td_tap_t;
+
 
 // Tap Dance definitions
 tap_dance_action_t tap_dance_actions[] = {
@@ -74,7 +91,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_DEL,           KC_Q,   KC_W,    KC_E,    KC_R,    KC_T,                                   KC_Y,     KC_U,     KC_I,    KC_O,    KC_P,        KC_BSPC,
     KC_TAB,           KC_A,   KC_S,    KC_D,    KC_F,    KC_G,                                   KC_H,     KC_J,     KC_K,    KC_L,    KC_SCLN,     KC_QUOT,
     TD(TD_ESC_HOME),  KC_Z,   KC_X,    KC_C,    KC_V,    KC_B,      KC_MUTE,   KC_MPLY,   KC_N,     KC_M,     KC_COMM, KC_DOT,  KC_SLSH, TD(TD_ESC_END),
-                               KC_LGUI, KC_LALT,MO(_SYMB),TD(TD_SFT_CTRL),   KC_ENT,   KC_SPC, TD(TD_CTRL_SFT),  LM(_SYMB, MOD_LSFT),KC_LALT, MO(_RAISE)
+                               KC_LGUI, KC_LALT,MO(_SYMB),TD(TD_SFT_CTRL),   KC_ENT,   KC_SPC, TD(TD_CTRL_SFT),  LM(_SYMB, MOD_LSFT),KC_LALT, TG(_RAISE)
 ),
 /* SYMB
  * ,-----------------------------------------.                    ,-----------------------------------------.
@@ -91,11 +108,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *            `----------------------------------'           '------''---------------------------'
  */
 [_SYMB] = LAYOUT(
-  _______,   KC_F1,   KC_F2,   KC_F3,   KC_F4,  KC_F5,                               KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_F11,
+  XXXXXXX,   KC_F1,   KC_F2,   KC_F3,   KC_F4,  KC_F5,                               KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_F11,
   KC_GRV,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                               KC_6,    KC_7,    KC_8,    KC_9,    KC_0,  KC_F12,
-  _______, _______, _______, KC_EQL, KC_MINS, _______,                               KC_LEFT, KC_DOWN, KC_UP, KC_RGHT, _______, _______,
-  KC_CIRC,  _______, _______, _______, _______, _______,     _______,       _______, _______, TD(TD_PRN), TD(TD_CBR), TD(TD_BRC), KC_BSLS, KC_DLR,
-    LM(_SYMB, MOD_LGUI|MOD_LCTL), LM(_SYMB, MOD_LGUI|MOD_LALT), _______, _______, _______,       _______, _______, _______, _______, _______
+  XXXXXXX, XXXXXXX, XXXXXXX, KC_EQL, KC_MINS, XXXXXXX,                               KC_LEFT, KC_DOWN, KC_UP, KC_RGHT, XXXXXXX, XXXXXXX,
+  KC_CIRC,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX,       XXXXXXX, XXXXXXX, TD(TD_PRN), TD(TD_CBR), TD(TD_BRC), KC_BSLS, KC_DLR,
+    LM(_SYMB, MOD_LGUI|MOD_LCTL), LM(_SYMB, MOD_LGUI|MOD_LALT), XXXXXXX, XXXXXXX, XXXXXXX,       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
 ),
 /* RAISE
  * ,----------------------------------------.                    ,-----------------------------------------.
@@ -112,24 +129,28 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *            `----------------------------------'           '------''---------------------------'
  */
 [_RAISE] = LAYOUT(
-  _______, _______ , _______ , _______ , _______ , _______,                      _______,  _______, _______,  _______, _______, _______,
-  _______,  KC_INS,  KC_PSCR,   KC_APP,  XXXXXXX, XXXXXXX,                       _______,  _______, _______,  _______, KC_PGUP, _______,
-  _______, LCTL(KC_Y),  _______,  _______,  _______, KC_CAPS,                       KC_LEFT, KC_DOWN,  KC_UP  ,  KC_RGHT, KC_PGDN, _______,
-  _______,LCTL(KC_Z), LCTL(KC_X), LCTL(KC_C), LCTL(KC_V), XXXXXXX,  _______,       _______,  _______,  _______, _______,  _______, _______, _______,
-                    _______, _______, _______, _______, _______,       _______, _______, _______, _______, _______
+  XXXXXXX,   KC_F1,   KC_F2,   KC_F3,   KC_F4,  KC_F5,                               KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_F11,
+  XXXXXXX,  KC_INS,  KC_PSCR,   KC_APP,  XXXXXXX, XXXXXXX,                          XXXXXXX,  XXXXXXX, XXXXXXX,  XXXXXXX, KC_PGUP, KC_F12,
+  XXXXXXX, LCTL(KC_Y),  XXXXXXX,  XXXXXXX,  XXXXXXX, KC_CAPS,                       KC_LEFT, KC_DOWN,  KC_UP  ,  KC_RGHT, KC_PGDN, XXXXXXX,
+  XXXXXXX,LCTL(KC_Z), LCTL(KC_X), LCTL(KC_C), LCTL(KC_V), XXXXXXX,  XXXXXXX,       XXXXXXX,  XXXXXXX,  XXXXXXX, XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX,
+                    XXXXXXX, XXXXXXX, XXXXXXX, KC_BTN2, KC_BTN1,       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,_______ 
 ),
 [_NPAD] = LAYOUT(
-  _______,  _______, _______, _______, _______, _______,                     _______, KC_NUM, _______, _______, _______, _______,
-  _______,  _______, _______, _______, _______, _______,                     _______, KC_KP_7, KC_KP_8, KC_KP_9, KC_PMNS, _______,
-  _______,  _______, _______, _______, _______, _______,                     _______, KC_KP_4, KC_KP_5, KC_KP_6, KC_PPLS, KC_ENT,
-  _______,  _______, _______, _______, _______, _______, KC_BTN1,    KC_BTN2,_______, KC_KP_1, KC_KP_2, KC_KP_3, KC_PSLS, KC_PAST,
-                     _______, _______, _______, _______, _______,    _______,KC_KP_0  , KC_PDOT, _______, _______
+  XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                     XXXXXXX, KC_NUM, XXXXXXX, XXXXXXX, XXXXXXX, _______,
+  XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                     XXXXXXX, KC_KP_7, KC_KP_8, KC_KP_9, KC_PMNS, KC_BSPC,
+  XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                     XXXXXXX, KC_KP_4, KC_KP_5, KC_KP_6, KC_PPLS, KC_ENT,
+  XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,    XXXXXXX,XXXXXXX, KC_KP_1, KC_KP_2, KC_KP_3, KC_PSLS, KC_PAST,
+                     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,    XXXXXXX,KC_KP_0  , KC_PDOT, XXXXXXX, XXXXXXX
 ),
 };
 
 // Initialize variable holding the binary
 // representation of active modifiers.
 uint8_t mod_state;
+td_state_t cur_dance(tap_dance_state_t *state);
+void ql_finished(tap_dance_state_t* state, void* user_data);
+void ql_reset(tap_dance_state_t* state, void* user_data);
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     // Store the current modifier state in the variable for later reference
     mod_state = get_mods();
