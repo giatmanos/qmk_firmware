@@ -21,6 +21,7 @@ uint16_t alt_tab_timer = 0;     // we will be using them soon.
 enum sofle_layers {
     _QWERTY,
     _SYMB,
+    _S_FUNC,
     _RAISE,
     _NPAD
 };
@@ -36,26 +37,10 @@ enum {
     TD_ESC_END,
     TD_SFT_CTRL,
     TD_CTRL_SFT,
-    TD_PRN,
-    TD_CBR,
-    TD_BRC,
-    TD_QUOT_LAYER
+    /*TD_PRN,*/
+    /*TD_CBR,*/
+    /*TD_BRC,*/
 };
-
-typedef enum {
-    TD_NONE,
-    TD_UNKNOWN,
-    TD_SINGLE_TAP,
-    TD_SIGNLE_HOLD,
-    TD_DOUBLE_TAP,
-    TD_DOUBLE_HOLD
-} td_state_t;
-
-typedef struct
-{
-    bool is_press_action;
-    td_state_t state;
-} td_tap_t;
 
 
 // Tap Dance definitions
@@ -64,9 +49,9 @@ tap_dance_action_t tap_dance_actions[] = {
     [TD_ESC_END] = ACTION_TAP_DANCE_DOUBLE(KC_ESC, KC_END),
     [TD_SFT_CTRL] = ACTION_TAP_DANCE_DOUBLE(KC_LSFT, KC_RCTL),
     [TD_CTRL_SFT] = ACTION_TAP_DANCE_DOUBLE(KC_LCTL, KC_LSFT),
-    [TD_PRN] = ACTION_TAP_DANCE_DOUBLE(KC_LPRN, KC_RPRN),
-    [TD_CBR] = ACTION_TAP_DANCE_DOUBLE(KC_LCBR, KC_RCBR),
-    [TD_BRC] = ACTION_TAP_DANCE_DOUBLE(KC_LBRC, KC_RBRC),
+    /*[TD_PRN] = ACTION_TAP_DANCE_DOUBLE(KC_LPRN, KC_RPRN),*/
+    /*[TD_CBR] = ACTION_TAP_DANCE_DOUBLE(KC_LCBR, KC_RCBR),*/
+    /*[TD_BRC] = ACTION_TAP_DANCE_DOUBLE(KC_LBRC, KC_RBRC),*/
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -93,7 +78,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     TD(TD_ESC_HOME),  KC_Z,   KC_X,    KC_C,    KC_V,    KC_B,      KC_MUTE,   KC_MPLY,   KC_N,     KC_M,     KC_COMM, KC_DOT,  KC_SLSH, TD(TD_ESC_END),
                                KC_LGUI, KC_LALT,MO(_SYMB),TD(TD_SFT_CTRL),   KC_ENT,   KC_SPC, TD(TD_CTRL_SFT),  LM(_SYMB, MOD_LSFT),KC_LALT, TG(_RAISE)
 ),
-/* SYMB
+/* SYMB1
  * ,-----------------------------------------.                    ,-----------------------------------------.
  * |      |  F1  |  F2  |  F3  |  F4  |  F5  |                    |  F6  |  F7  |  F8  |  F9  | F10  | F11  |
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
@@ -108,11 +93,25 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *            `----------------------------------'           '------''---------------------------'
  */
 [_SYMB] = LAYOUT(
-  XXXXXXX,   KC_F1,   KC_F2,   KC_F3,   KC_F4,  KC_F5,                               KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_F11,
-  KC_GRV,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                               KC_6,    KC_7,    KC_8,    KC_9,    KC_0,  KC_F12,
+  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,  XXXXXXX,                XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,  XXXXXXX,  XXXXXXX,
+  KC_GRV,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                               KC_6,    KC_7,    KC_8,    KC_9,    KC_0,  _______,
   XXXXXXX, XXXXXXX, XXXXXXX, KC_EQL, KC_MINS, XXXXXXX,                               KC_LEFT, KC_DOWN, KC_UP, KC_RGHT, XXXXXXX, XXXXXXX,
-  KC_CIRC,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX,       XXXXXXX, XXXXXXX, TD(TD_PRN), TD(TD_CBR), TD(TD_BRC), KC_BSLS, KC_DLR,
-    LM(_SYMB, MOD_LGUI|MOD_LCTL), LM(_SYMB, MOD_LGUI|MOD_LALT), _______, _______, _______,       _______, _______, _______, _______, _______
+  XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_BSLS, XXXXXXX,
+    LM(_SYMB, MOD_LGUI|MOD_LCTL), LM(_SYMB, MOD_LCTL|MOD_LALT), _______, KC_RCTL, MO(_S_FUNC),       _______, _______, _______, _______,_______
+),
+/*[_SYMB_HI] = LAYOUT(*/
+/*  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,  XXXXXXX,                XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,  XXXXXXX,  XXXXXXX,*/
+/*  KC_TILD, KC_EXLM, KC_AT, KC_HASH, KC_DLR, KC_PERC,                    KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN,  _______,*/
+/*  XXXXXXX, XXXXXXX, XXXXXXX, KC_PLUS, KC_UNDS, XXXXXXX,                               KC_LEFT, KC_DOWN, KC_UP, KC_RGHT, XXXXXXX, XXXXXXX,*/
+/*  XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_PIPE, XXXXXXX,*/
+/*                    _______, _______, _______, _______, _______,       _______, _______, _______, _______,_______*/
+/*),*/
+[_S_FUNC] = LAYOUT(
+  _______,  _______, _______, _______, _______, _______,                     _______, _______, _______, _______, _______, KC_F12,
+  _______,   KC_F1,   KC_F2,   KC_F3,   KC_F4,  KC_F5,                               KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_F11,
+  _______, XXXXXXX, KC_LBRC, KC_LCBR, KC_LPRN, XXXXXXX,                               XXXXXXX, KC_RPRN, KC_RCBR, KC_RBRC, XXXXXXX, XXXXXXX,
+  _______,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, _______,
+                    _______, _______, _______, _______, _______,       _______, KC_LCTL, KC_LSFT, _______,_______
 ),
 /* RAISE
  * ,----------------------------------------.                    ,-----------------------------------------.
@@ -130,10 +129,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 [_RAISE] = LAYOUT(
   XXXXXXX,   KC_F1,   KC_F2,   KC_F3,   KC_F4,  KC_F5,                               KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_F11,
-  XXXXXXX,  KC_INS,  KC_PSCR,   KC_APP,  XXXXXXX, XXXXXXX,                          XXXXXXX,  XXXXXXX, XXXXXXX,  XXXXXXX, KC_PGUP, KC_F12,
+  XXXXXXX,  KC_INS,  KC_PSCR,   KC_APP,  KC_END, XXXXXXX,                          KC_HOME,  XXXXXXX, XXXXXXX,  XXXXXXX, KC_PGUP, KC_F12,
   XXXXXXX, LCTL(KC_Y),  XXXXXXX,  XXXXXXX,  XXXXXXX, KC_CAPS,                       KC_LEFT, KC_DOWN,  KC_UP  ,  KC_RGHT, KC_PGDN, XXXXXXX,
   XXXXXXX,LCTL(KC_Z), LCTL(KC_X), LCTL(KC_C), LCTL(KC_V), XXXXXXX,  XXXXXXX,       XXXXXXX,  XXXXXXX,  XXXXXXX, XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX,
-                    _______, _______, _______, _______, _______,       _______, _______, _______, _______,_______ 
+    LM(_SYMB, MOD_LGUI|MOD_LCTL), LM(_SYMB, MOD_LCTL|MOD_LALT), _______, LM(_SYMB, MOD_LCTL|MOD_LSFT), _______,       _______, _______, _______, _______, _______
 ),
 [_NPAD] = LAYOUT(
   XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                     XXXXXXX, KC_NUM, XXXXXXX, XXXXXXX, XXXXXXX, _______,
@@ -147,76 +146,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // Initialize variable holding the binary
 // representation of active modifiers.
 uint8_t mod_state;
-td_state_t cur_dance(tap_dance_state_t *state);
-void ql_finished(tap_dance_state_t* state, void* user_data);
-void ql_reset(tap_dance_state_t* state, void* user_data);
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     // Store the current modifier state in the variable for later reference
     mod_state = get_mods();
     switch (keycode) {
-    case KC_MS_U:
-        {
-            // Initialize a boolean variable that keeps track
-            // of the delete key status: registered or not?
-            static bool mouse_up_registered;
-            if (record->event.pressed)
-            {
-                // Detect the activation of either shift keys
-                if (mod_state & MOD_MASK_SHIFT) {
-                    // First temporarily canceling both shifts so that
-                    // shift isn't applied to the KC_DEL keycode
-                    del_mods(MOD_MASK_SHIFT);
-                    register_code(KC_MS_L);
-                    // Update the boolean variable to reflect the status of KC_DEL
-                    mouse_up_registered = true;
-                    // Reapplying modifier state so that the held shift key(s)
-                    // still work even after having tapped the Backspace/Delete key.
-                    set_mods(mod_state);
-                    return false;
-                }
-            }
-            else
-            { // on release of KC_WH_D
-                if (mouse_up_registered) {
-                    unregister_code(KC_MS_L);
-                    mouse_up_registered = false;
-                    return false;
-                }
-            }
-            return true;
-        }
-    case KC_MS_D:
-        {
-            // Initialize a boolean variable that keeps track
-            // of the delete key status: registered or not?
-            static bool mouse_down_registered;
-            if (record->event.pressed)
-            {
-                // Detect the activation of either shift keys
-                if (mod_state & MOD_MASK_SHIFT) {
-                    // First temporarily canceling both shifts so that
-                    // shift isn't applied to the KC_DEL keycode
-                    del_mods(MOD_MASK_SHIFT);
-                    register_code(KC_MS_R);
-                    // Update the boolean variable to reflect the status of KC_DEL
-                    mouse_down_registered = true;
-                    // Reapplying modifier state so that the held shift key(s)
-                    // still work even after having tapped the Backspace/Delete key.
-                    set_mods(mod_state);
-                    return false;
-                }
-            }
-            else
-            { // on release of KC_WH_D
-                if (mouse_down_registered) {
-                    unregister_code(KC_MS_R);
-                    mouse_down_registered = false;
-                    return false;
-                }
-            }
-            return true;
-        }
     case KC_WH_U:
         {
             // Initialize a boolean variable that keeps track
@@ -342,6 +276,9 @@ static void print_status_narrow(void) {
         case _RAISE:
             oled_write_P(PSTR("Raise"), false);
             break;
+        case _S_FUNC:
+            oled_write_P(PSTR("Bracs"), false);
+            break;
         case _SYMB:
             oled_write_P(PSTR("Symb"), false);
             break;
@@ -375,41 +312,29 @@ bool oled_task_user(void) {
     {
         if (host_keyboard_led_state().num_lock)
         {
-            oled_write_ln_P(PSTR("Num"), false);
-            oled_write_ln_P(PSTR("Lock"), false);
-            oled_write_ln_P(PSTR("On"), false);
+            oled_write_ln_P(PSTR("Num+"), false);
         }
         else
         {
-            oled_write_ln_P(PSTR("Num"), false);
-            oled_write_ln_P(PSTR("Lock"), false);
-            oled_write_ln_P(PSTR("Off"), false);
+            oled_write_ln_P(PSTR("Num-"), false);
         }
         oled_write_ln_P(PSTR("\n\n"), false);
         if (host_keyboard_led_state().caps_lock)
         {
-            oled_write_ln_P(PSTR("Caps"), false);
-            oled_write_ln_P(PSTR("Lock"), false);
-            oled_write_ln_P(PSTR("On"), false);
+            oled_write_ln_P(PSTR("Caps+"), false);
         }
         else
         {
-            oled_write_ln_P(PSTR("Caps"), false);
-            oled_write_ln_P(PSTR("Lock"), false);
-            oled_write_ln_P(PSTR("Off"), false);
+            oled_write_ln_P(PSTR("Caps-"), false);
         }
         oled_write_ln_P(PSTR("\n\n"), false);
         if (host_keyboard_led_state().scroll_lock)
         {
-            oled_write_ln_P(PSTR("Scrl"), false);
-            oled_write_ln_P(PSTR("Lock"), false);
-            oled_write_ln_P(PSTR("On"), false);
+            oled_write_ln_P(PSTR("Scrl+"), false);
         }
         else
         {
-            oled_write_ln_P(PSTR("Scrl"), false);
-            oled_write_ln_P(PSTR("Lock"), false);
-            oled_write_ln_P(PSTR("Off"), false);
+            oled_write_ln_P(PSTR("Scrl-"), false);
         }
     }
     return false;
