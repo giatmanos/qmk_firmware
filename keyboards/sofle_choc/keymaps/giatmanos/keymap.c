@@ -214,36 +214,11 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 #endif
 
 #ifdef OLED_ENABLE
-static void print_status_narrow(void) {
-    oled_clear();
-    // Print current mode
-    oled_write_P(PSTR("\n\n"), false);
-    // Print current layer
-    oled_write_ln_P(PSTR("LAYER"), false);
-    switch (get_highest_layer(layer_state)) {
-        case _QWERTY:
-            oled_write_P(PSTR("Base"), false);
-            break;
-        case _NUMS:
-            oled_write_P(PSTR("Nums"), false);
-            break;
-        case _SYMB:
-            oled_write_P(PSTR("Symb"), false);
-            break;
-        case _NPAD:
-            oled_write_ln_P(PSTR("Num\n"), false);
-            oled_write_ln_P(PSTR("Pad"), false);
-            break;
-        default:
-            oled_write_ln_P(PSTR("Undef"), false);
-    }
-    oled_write_P(PSTR("\n\n"), false);
-}
 
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
     if (is_keyboard_master())
     {
-        return OLED_ROTATION_270;
+        return OLED_ROTATION_0; // flips the display 180 degrees if offhand
     }
     else
     {
@@ -252,40 +227,122 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
     return rotation;
 }
 
-bool oled_task_user(void) {
-    if (is_keyboard_master()) {
-        print_status_narrow();
+void oled_secondary(void) {
+    if (host_keyboard_led_state().num_lock)
+    {
+        oled_write_ln_P(PSTR("Num+"), false);
     }
     else
     {
-        if (host_keyboard_led_state().num_lock)
-        {
-            oled_write_ln_P(PSTR("Num+"), false);
+        oled_write_ln_P(PSTR("Num-"), false);
+    }
+    oled_write_ln_P(PSTR("\n\n"), false);
+    if (host_keyboard_led_state().caps_lock)
+    {
+        oled_write_ln_P(PSTR("Caps+"), false);
+    }
+    else
+    {
+        oled_write_ln_P(PSTR("Caps-"), false);
+    }
+    oled_write_ln_P(PSTR("\n\n"), false);
+    if (host_keyboard_led_state().scroll_lock)
+    {
+        oled_write_ln_P(PSTR("Scrl+"), false);
+    }
+    else
+    {
+        oled_write_ln_P(PSTR("Scrl-"), false);
+    }
+}
+
+static void oled_render_layer_state(void) {
+    oled_write_P(PSTR("Layer: "), false);
+    switch (get_highest_layer(layer_state)) {
+        case _QWERTY:
+            oled_write_ln_P(PSTR("Base"), false);
+            break;
+        case _NUMS:
+            oled_write_ln_P(PSTR("Nums"), false);
+            break;
+        case _SYMB:
+            oled_write_ln_P(PSTR("Symb"), false);
+            break;
+        case _NPAD:
+            oled_write_ln_P(PSTR("NumPad"), false);
+            break;
+        default:
+            oled_write_ln_P(PSTR("Undef"), false);
+    }
+}
+
+char     key_name = ' ';
+uint16_t last_keycode;
+uint8_t  last_row;
+uint8_t  last_col;
+
+static const char PROGMEM code_to_name[60] = {' ', ' ', ' ', ' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'R', 'E', 'B', 'T', '_', '-', '=', '[', ']', '\\', '#', ';', '\'', '`', ',', '.', '/', ' ', ' ', ' '};
+
+static void set_keylog(uint16_t keycode, keyrecord_t *record) {
+    // save the row and column (useful even if we can't find a keycode to show)
+    last_row = record->event.key.row;
+    last_col = record->event.key.col;
+
+    key_name     = ' ';
+    last_keycode = keycode;
+    if (IS_QK_MOD_TAP(keycode)) {
+        if (record->tap.count) {
+            keycode = QK_MOD_TAP_GET_TAP_KEYCODE(keycode);
+        } else {
+            keycode = 0xE0 + biton(QK_MOD_TAP_GET_MODS(keycode) & 0xF) + biton(QK_MOD_TAP_GET_MODS(keycode) & 0x10);
         }
-        else
-        {
-            oled_write_ln_P(PSTR("Num-"), false);
-        }
-        oled_write_ln_P(PSTR("\n\n"), false);
-        if (host_keyboard_led_state().caps_lock)
-        {
-            oled_write_ln_P(PSTR("Caps+"), false);
-        }
-        else
-        {
-            oled_write_ln_P(PSTR("Caps-"), false);
-        }
-        oled_write_ln_P(PSTR("\n\n"), false);
-        if (host_keyboard_led_state().scroll_lock)
-        {
-            oled_write_ln_P(PSTR("Scrl+"), false);
-        }
-        else
-        {
-            oled_write_ln_P(PSTR("Scrl-"), false);
-        }
+    } else if (IS_QK_LAYER_TAP(keycode) && record->tap.count) {
+        keycode = QK_LAYER_TAP_GET_TAP_KEYCODE(keycode);
+    } else if (IS_QK_MODS(keycode)) {
+        keycode = QK_MODS_GET_BASIC_KEYCODE(keycode);
+    } else if (IS_QK_ONE_SHOT_MOD(keycode)) {
+        keycode = 0xE0 + biton(QK_ONE_SHOT_MOD_GET_MODS(keycode) & 0xF) + biton(QK_ONE_SHOT_MOD_GET_MODS(keycode) & 0x10);
+    }
+    if (keycode > ARRAY_SIZE(code_to_name)) {
+        return;
+    }
+
+    // update keylog
+    key_name = pgm_read_byte(&code_to_name[keycode]);
+}
+
+static const char *depad_str(const char *depad_str, char depad_char) {
+    while (*depad_str == depad_char)
+        ++depad_str;
+    return depad_str;
+}
+
+static void oled_render_keylog(void) {
+    oled_write_char('0' + last_row, false);
+    oled_write_P(PSTR("x"), false);
+    oled_write_char('0' + last_col, false);
+    oled_write_P(PSTR(", k"), false);
+    const char *last_keycode_str = get_u16_str(last_keycode, ' ');
+    oled_write(depad_str(last_keycode_str, ' '), false);
+    oled_write_P(PSTR(":"), false);
+    oled_write_char(key_name, false);
+}
+
+bool oled_task_kb(void) {
+    if (is_keyboard_master()) {
+        oled_clear();
+        oled_render_layer_state();
+        oled_render_keylog();
+    } else {
+        oled_secondary();
     }
     return false;
 }
 
-#endif
+bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
+    if (record->event.pressed) {
+        set_keylog(keycode, record);
+    }
+    return process_record_user(keycode, record);
+}
+#endif // OLED_ENABLE

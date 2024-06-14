@@ -49,13 +49,16 @@ static void oled_render_layer_state(void) {
             oled_write_ln_P(PSTR("Default"), false);
             break;
         case 1:
-            oled_write_ln_P(PSTR("Lower"), false);
+            oled_write_ln_P(PSTR("Numbers"), false);
             break;
         case 2:
-            oled_write_ln_P(PSTR("Raise"), false);
+            oled_write_ln_P(PSTR("Symbols"), false);
             break;
         case 3:
-            oled_write_ln_P(PSTR("Adjust"), false);
+            oled_write_ln_P(PSTR("FunctionKeys"), false);
+            break;
+        case 4:
+            oled_write_ln_P(PSTR("NumPad"), false);
             break;
         default:
             oled_write_ln_P(PSTR("Undef"), false);
