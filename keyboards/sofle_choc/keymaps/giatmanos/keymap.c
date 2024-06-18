@@ -66,7 +66,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       XXXXXXX, XXXXXXX, XXXXXXX,  KC_INS, KC_PSCR, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_RALT,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-           KC_LGUI, XXXXXXX, _______, G(C(KC_LEFT)), G(C(KC_RIGHT)),     KC_SPC, KC_LSFT, KC_LCTL, KC_LALT, KC_LGUI
+           KC_LGUI, XXXXXXX, _______, G(C(KC_LEFT)), G(C(KC_RIGHT)),     KC_SPC, KC_LCTL, KC_LSFT, KC_LALT, KC_LGUI
 ),
 [_SYMB] = LAYOUT(
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
