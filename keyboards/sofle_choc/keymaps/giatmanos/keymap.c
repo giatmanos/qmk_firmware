@@ -52,9 +52,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       KC_TAB,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                         KC_H,    KC_J,    KC_K,    KC_L, KC_SCLN, KC_QUOT,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_ESC,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B, KC_MUTE,    KC_MPLY,    KC_N,    KC_M, KC_COMM,  KC_DOT, KC_SLSH,  XXXXXXX,
+      KC_ESC,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B, KC_MUTE,    KC_MPLY,    KC_N,    KC_M, KC_COMM,  KC_DOT, KC_SLSH,  KC_LALT,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-               KC_LGUI, KC_LALT,MO(_NUMS),TD(TD_SFT_CTRL),   KC_ENT,   KC_SPC, TD(TD_CTRL_SFT),  MO(_SYMB), KC_LALT, TG(_NPAD)
+               KC_LGUI, KC_LALT,MO(_NUMS),TD(TD_SFT_CTRL),   KC_ENT,   KC_SPC, TD(TD_CTRL_SFT),  MO(_SYMB), XXXXXXX, TG(_NPAD)
 ),
 [_NUMS] = LAYOUT(
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
@@ -64,9 +64,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       KC_CAPS, XXXXXXX,  KC_INS,  KC_EQL, KC_MINS, XXXXXXX,                      KC_LEFT, KC_DOWN,  KC_UP, KC_RIGHT, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LGUI, XXXXXXX, KC_PSCR, KC_PLUS, KC_UNDS, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+      KC_LGUI, XXXXXXX, KC_PSCR, KC_PLUS, KC_UNDS, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_LALT,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-           KC_LGUI, XXXXXXX, _______, G(C(KC_LEFT)), G(C(KC_RIGHT)),     KC_SPC, KC_LCTL, KC_LSFT, KC_LALT, KC_LGUI
+           KC_LGUI, XXXXXXX, _______, G(C(KC_LEFT)), G(C(KC_RIGHT)),     KC_SPC, KC_LCTL, KC_LSFT, XXXXXXX, KC_LGUI
 ),
 [_SYMB] = LAYOUT(
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
